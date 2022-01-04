@@ -2,10 +2,7 @@ package com.firefry.superherocardfile.controller;
 
 import com.firefry.superherocardfile.api.request.CharacterRequest;
 import com.firefry.superherocardfile.entity.CharacterEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import com.firefry.superherocardfile.entity.ComicEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -26,7 +23,12 @@ public class CharacterController {
         return "From CharacterController - " + characterId;
     }
 
-    @PostMapping("/v1/public/characters/{characterId}")
+    @GetMapping("/v1/public/characters/{characterId}/characters")
+    public Collection<ComicEntity> getComicsList(@PathVariable String characterId){
+        return Collections.emptyList();
+    }
+
+    @PostMapping("/v1/public/characters/")
     public String addCharacter(@RequestBody CharacterRequest request){
         return request.getDescription();
     }

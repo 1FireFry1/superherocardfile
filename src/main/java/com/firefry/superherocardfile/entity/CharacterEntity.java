@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -29,7 +28,6 @@ public class CharacterEntity {
 
     public CharacterEntity(){
         LocalDateTime date = LocalDateTime.now();
-//        this.id = UUID.randomUUID().toString();
         this.createdDateTime = date;
         this.modifiedDateTime = date;
     }

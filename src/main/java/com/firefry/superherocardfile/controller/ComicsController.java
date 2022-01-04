@@ -1,6 +1,5 @@
 package com.firefry.superherocardfile.controller;
 
-import com.firefry.superherocardfile.api.request.CharacterRequest;
 import com.firefry.superherocardfile.api.request.ComicsRequest;
 import com.firefry.superherocardfile.entity.CharacterEntity;
 import org.springframework.web.bind.annotation.*;
