@@ -2,9 +2,12 @@ package com.firefry.superherocardfile.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class MarvelResponse {
-    private String description;
+    private final String id;
+    private final String name;
+    private final String description;
 }

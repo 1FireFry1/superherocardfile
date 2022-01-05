@@ -1,7 +1,8 @@
 package com.firefry.superherocardfile.api.response;
 
+
 public class CharactersResponse extends MarvelResponse{
-    CharactersResponse(String description){
-        super(description);
+    public CharactersResponse(String characterId, String name, String description){
+        super(characterId, name, description);
     }
 }

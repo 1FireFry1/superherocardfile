@@ -1,23 +1,22 @@
-package com.firefry.superherocardfile.entity;
-
-
+package com.firefry.superherocardfile.domain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Entity
 @Data
-public class CharacterEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public abstract class MarvelEntity {
+
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
+
     @NotNull
     @NotBlank
     private String name;
@@ -26,16 +25,16 @@ public class CharacterEntity {
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
 
-    public CharacterEntity(){
+    public MarvelEntity(){
+        this.id = UUID.randomUUID().toString();
         LocalDateTime date = LocalDateTime.now();
         this.createdDateTime = date;
         this.modifiedDateTime = date;
     }
 
-    public CharacterEntity(String name, String description){
+    public MarvelEntity(String name, String description){
         this();
         this.name = name;
         this.description = description;
     }
-
 }
