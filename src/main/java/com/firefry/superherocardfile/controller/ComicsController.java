@@ -2,33 +2,39 @@ package com.firefry.superherocardfile.controller;
 
 import com.firefry.superherocardfile.api.request.ComicsRequest;
 import com.firefry.superherocardfile.api.response.ComicsResponse;
-import com.firefry.superherocardfile.api.response.MarvelResponse;
-import com.firefry.superherocardfile.domain.CharacterEntity;
-import com.firefry.superherocardfile.repository.ComicRepository;
+import com.firefry.superherocardfile.exception.NotFoundComicEntityException;
 import com.firefry.superherocardfile.service.ComicsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Collections;
-
 @RestController
+@RequestMapping("/v1/public")
 @RequiredArgsConstructor
 public class ComicsController {
+
+    @Autowired
     private final ComicsService comicsService;
 
-    @GetMapping("/v1/public/comics/")
-    public Collection<MarvelResponse> getComicsList(){
-        return comicsService.getFirst();
+    @GetMapping("/comics")
+    public Iterable<ComicsResponse> getComicsList(){
+        return comicsService.getComicsList();
     }
 
-    @GetMapping("/v1/public/comics/{comicsId}")
-    public ComicsResponse getComicById(@PathVariable String comicId){
-        return comicsService.getById(comicId);
+    @GetMapping("/comics/{comicsId}")
+    public ResponseEntity getComicById(@PathVariable String comicId){
+        try {
+            return ResponseEntity.ok().body(comicsService.getById(comicId));
+        } catch (NotFoundComicEntityException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @PostMapping("/v1/public/comics/")
-    public ComicsResponse addComics(@RequestBody ComicsRequest request){
-        return (ComicsResponse) comicsService.create(request);
+    @PostMapping("/comics")
+    public ResponseEntity addComic(@RequestBody ComicsRequest request){
+        comicsService.create(request);
+        return ResponseEntity.ok("Comic successfully saved");
     }
+
 }

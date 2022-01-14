@@ -2,42 +2,39 @@ package com.firefry.superherocardfile.controller;
 
 import com.firefry.superherocardfile.api.request.CharacterRequest;
 import com.firefry.superherocardfile.api.response.CharactersResponse;
-import com.firefry.superherocardfile.api.response.MarvelResponse;
-import com.firefry.superherocardfile.domain.ComicEntity;
+import com.firefry.superherocardfile.exception.NotFoundCharacterEntityException;
 import com.firefry.superherocardfile.service.CharacterService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Collections;
 
 @RestController()
-@RequiredArgsConstructor
+@RequestMapping("/v1/public")
+
 public class CharacterController {
 
-    private final CharacterService characterService;
+    @Autowired
+    private CharacterService characterService;
 
-    @GetMapping("/v1/public/characters/")
-    public Collection<MarvelResponse> getCharactersList(){
-        return characterService.getFirst();
-//        return Collections.emptyList();
+    @GetMapping("/characters/{characterId}")
+    public ResponseEntity getById(@PathVariable String characterId){
+        try {
+            return ResponseEntity.ok().body(characterService.getById(characterId));
+        } catch (NotFoundCharacterEntityException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @GetMapping("/v1/public/characters/{characterId}")
-    public CharactersResponse getCharacterById(@PathVariable String characterId){
-        return characterService.getById(characterId);
+    @GetMapping("/characters")
+    public Iterable<CharactersResponse> getCharactersList(){
+        return characterService.getCharactersList();
     }
 
-    @GetMapping("/v1/public/characters/{characterId}/characters")
-    public Collection<ComicEntity> getComicsList(@PathVariable String characterId){
-        return Collections.emptyList();
+    @PostMapping("/characters")
+    public ResponseEntity addCharacter(@RequestBody CharacterRequest request){
+        characterService.create(request);
+        return ResponseEntity.ok("Character successfully saved");
     }
-
-    @PostMapping("/v1/public/characters/")
-    public CharactersResponse addCharacter(@RequestBody CharacterRequest request){
-        return (CharactersResponse) characterService.create(request);
-    }
-
-
 
 }

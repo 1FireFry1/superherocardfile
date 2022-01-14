@@ -1,40 +1,35 @@
-package com.firefry.superherocardfile.domain;
+package com.firefry.superherocardfile.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Document(collection = "characters")
 @Data
-public abstract class MarvelEntity {
+public class CharacterEntity{
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
     private String id;
 
-    @NotNull
-    @NotBlank
     private String name;
-    @NotNull
     private String description;
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
 
-    public MarvelEntity(){
+    public CharacterEntity(){
         this.id = UUID.randomUUID().toString();
         LocalDateTime date = LocalDateTime.now();
         this.createdDateTime = date;
         this.modifiedDateTime = date;
     }
 
-    public MarvelEntity(String name, String description){
+    public CharacterEntity(String name, String description){
         this();
         this.name = name;
         this.description = description;
     }
+
 }
