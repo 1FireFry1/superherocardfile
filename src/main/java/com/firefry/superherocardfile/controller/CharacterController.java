@@ -5,8 +5,12 @@ import com.firefry.superherocardfile.api.response.CharactersResponse;
 import com.firefry.superherocardfile.exception.NotFoundCharacterEntityException;
 import com.firefry.superherocardfile.service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController()
@@ -22,13 +26,15 @@ public class CharacterController {
         try {
             return ResponseEntity.ok().body(characterService.getById(characterId));
         } catch (NotFoundCharacterEntityException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping("/characters")
-    public Iterable<CharactersResponse> getCharactersList(){
-        return characterService.getCharactersList();
+    public Page<CharactersResponse> getCharactersList(@RequestParam Optional<Integer> page
+                                                        , @RequestParam Optional<Integer> size
+                                                        , @RequestParam Optional<String> sortBy){
+        return characterService.getCharactersPage(page, size, sortBy);
     }
 
     @PostMapping("/characters")

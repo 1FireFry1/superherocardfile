@@ -14,7 +14,7 @@ public class ComicEntity{
     @Id
     private String id;
 
-    private String name;
+    private String title;
     private String description;
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
@@ -26,9 +26,9 @@ public class ComicEntity{
         this.modifiedDateTime = date;
     }
 
-    public ComicEntity(String name, String description){
+    public ComicEntity(String title, String description){
         this();
-        this.name = name;
+        this.title = title;
         this.description = description;
     }
 

@@ -7,11 +7,12 @@ import com.firefry.superherocardfile.exception.NotFoundCharacterEntityException;
 import com.firefry.superherocardfile.repository.CharacterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,11 +28,11 @@ public class CharacterService {
         return CharactersResponse.toCharactersResponse(entity.get());
     }
 
-    public List<CharactersResponse> getCharactersList() {
-        List<CharacterEntity> characterEntityList = characterRepository.findAll();
-
-        return characterEntityList.stream().map(CharactersResponse::toCharactersResponse)
-                .collect(Collectors.toList());
+    public Page<CharactersResponse> getCharactersPage(Optional<Integer> page, Optional<Integer> size, Optional<String> sortBy) {
+        Page<CharactersResponse> charactersResponsePage = characterRepository.findAll(PageRequest.of(page.orElse(0)
+                , size.orElse(3)
+                , Sort.Direction.ASC, sortBy.orElse("name"))).map(CharactersResponse::toCharactersResponse);
+        return charactersResponsePage;
     }
 
     public CharactersResponse create(CharacterRequest request) {

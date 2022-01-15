@@ -12,7 +12,7 @@ public class ComicsResponse{
     public static ComicsResponse toComicsResponse(ComicEntity entity){
         ComicsResponse response = new ComicsResponse();
         response.setId(entity.getId());
-        response.setName(entity.getName());
+        response.setName(entity.getTitle());
         response.setDescription(entity.getDescription());
         return response;
     }
