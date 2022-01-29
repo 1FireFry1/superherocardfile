@@ -3,7 +3,6 @@ package com.firefry.superherocardfile.api.response;
 
 import com.firefry.superherocardfile.entity.CharacterEntity;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
 public class CharactersResponse{

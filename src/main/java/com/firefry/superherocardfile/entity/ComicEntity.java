@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Document(collection = "comics")
@@ -16,6 +17,8 @@ public class ComicEntity{
 
     private String title;
     private String description;
+    private String imageName;
+    private List<String> charactersList;
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
 
@@ -26,10 +29,11 @@ public class ComicEntity{
         this.modifiedDateTime = date;
     }
 
-    public ComicEntity(String title, String description){
+    public ComicEntity(String title, String description, List<String> charactersList){
         this();
         this.title = title;
         this.description = description;
+        this.charactersList = charactersList;
     }
 
 }
