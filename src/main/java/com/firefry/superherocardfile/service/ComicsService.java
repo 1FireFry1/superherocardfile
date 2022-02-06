@@ -3,6 +3,7 @@ package com.firefry.superherocardfile.service;
 import com.firefry.superherocardfile.api.request.ComicsRequest;
 import com.firefry.superherocardfile.api.response.CharactersResponse;
 import com.firefry.superherocardfile.api.response.ComicsResponse;
+import com.firefry.superherocardfile.entity.CharacterEntity;
 import com.firefry.superherocardfile.entity.ComicEntity;
 import com.firefry.superherocardfile.exception.NotFoundComicEntityException;
 import com.firefry.superherocardfile.repository.ComicRepository;
@@ -44,10 +45,19 @@ public class ComicsService{
         return comicsResponsePage;
     }
 
-    public ComicsResponse create(ComicsRequest request) {
-        ComicEntity entity = new ComicEntity(request.getTitle(), request.getDescription(), request.getCharactersList());
-        comicRepository.save(entity);
-        return ComicsResponse.toComicsResponse(entity);
+    public ComicsResponse addComic(ComicsRequest request) {
+        Optional<ComicEntity> optionalComicEntity = comicRepository.findByTitle(request.getTitle());
+        if (optionalComicEntity.isPresent()){
+            ComicEntity entity = optionalComicEntity.get();
+            entity.setTitle(request.getTitle());
+            entity.setDescription(request.getDescription());
+            entity.setCharactersList(request.getCharactersList());
+            return ComicsResponse.toComicsResponse(comicRepository.save(entity));
+        }
+        ComicEntity entity = new ComicEntity(request.getTitle(),
+                                            request.getDescription(),
+                                            request.getCharactersList());
+        return ComicsResponse.toComicsResponse(comicRepository.save(entity));
     }
 
     public void deleteById(String comicId) {

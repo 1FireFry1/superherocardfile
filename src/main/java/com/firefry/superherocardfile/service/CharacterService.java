@@ -38,13 +38,20 @@ public class CharacterService {
     public Page<CharactersResponse> getCharactersPage(Optional<Integer> page
                                                     , Optional<Integer> size
                                                     , Optional<String> sortBy) {
-        Page<CharactersResponse> charactersResponsePage = characterRepository.findAll(PageRequest.of(page.orElse(0)
+        return characterRepository.findAll(PageRequest.of(page.orElse(0)
                 , size.orElse(3)
                 , Sort.Direction.ASC, sortBy.orElse("name"))).map(CharactersResponse::toCharactersResponse);
-        return charactersResponsePage;
     }
 
-    public CharactersResponse create(CharacterRequest request) {
+    public CharactersResponse addCharacter(CharacterRequest request) {
+        Optional<CharacterEntity> optionalCharacterEntity = characterRepository.findByName(request.getName());
+        if (optionalCharacterEntity.isPresent()){
+            CharacterEntity entity = optionalCharacterEntity.get();
+            entity.setImageName(request.getName());
+            entity.setDescription(request.getDescription());
+            entity.setComicsList(request.getComicsList());
+            return CharactersResponse.toCharactersResponse(characterRepository.save(entity));
+        }
         CharacterEntity entity = new CharacterEntity(request.getName(),
                                                     request.getDescription(),
                                                     request.getComicsList());
@@ -58,9 +65,12 @@ public class CharacterService {
     public Page<ComicsResponse> getComicsPageByCharacterId(String characterId,
                                                            Optional<Integer> page,
                                                            Optional<Integer> size,
-                                                           Optional<String> sortBy) {
-        CharacterEntity characterEntity = characterRepository.findById(characterId).get();
-        return comicsService.getComicsPageByCharacter(characterEntity.getName(), page, size, sortBy);
+                                                           Optional<String> sortBy) throws NotFoundCharacterEntityException {
+        Optional<CharacterEntity> optionalCharacter =characterRepository.findById(characterId);
+        if (optionalCharacter.isEmpty()){
+            throw new NotFoundCharacterEntityException("Not found character with id=" + characterId);
+        }
+        return comicsService.getComicsPageByCharacter(optionalCharacter.get().getName(), page, size, sortBy);
     }
 
     public Page<CharactersResponse> getCharactersPageByComic(String title,

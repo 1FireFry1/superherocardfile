@@ -2,26 +2,26 @@ package com.firefry.superherocardfile.controller;
 
 import com.firefry.superherocardfile.api.request.CharacterRequest;
 import com.firefry.superherocardfile.api.response.CharactersResponse;
-//import com.firefry.superherocardfile.exception.NotExistDirectoryException;
 import com.firefry.superherocardfile.api.response.ComicsResponse;
 import com.firefry.superherocardfile.exception.NotFoundCharacterEntityException;
 import com.firefry.superherocardfile.service.CharacterService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-//import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 
 @RestController()
 @RequestMapping("/v1/public/characters")
-
+@Tag(name = "Characters")
 public class CharacterController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterController.class);
 
     @Autowired
     private CharacterService characterService;
@@ -29,8 +29,10 @@ public class CharacterController {
     @GetMapping("/{characterId}")
     public ResponseEntity getById(@PathVariable String characterId){
         try {
+            LOGGER.info("PathVariable=" + characterId);
             return ResponseEntity.ok().body(characterService.getById(characterId.trim()));
         } catch (NotFoundCharacterEntityException e) {
+            LOGGER.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -47,23 +49,22 @@ public class CharacterController {
                                                            @RequestParam Optional<Integer> page,
                                                            @RequestParam Optional<Integer> size,
                                                            @RequestParam Optional<String> sortBy){
-        return characterService.getComicsPageByCharacterId(characterId, page, size, sortBy);
+        try {
+            return characterService.getComicsPageByCharacterId(characterId.trim(), page, size, sortBy);
+        } catch (NotFoundCharacterEntityException e) {
+            return (Page<ComicsResponse>) ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{characterId}")
     public ResponseEntity<CharactersResponse> deleteCharacterById(@PathVariable String characterId){
-        characterService.deleteById(characterId);
+        characterService.deleteById(characterId.trim());
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("")
-    public ResponseEntity addCharacter(@RequestBody CharacterRequest request){
-//        try {
-            characterService.create(request);
-//        } catch (NotExistDirectoryException e) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-//        }
-        return ResponseEntity.ok("Character successfully saved");
+    @RequestMapping(value = "", method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseEntity<CharactersResponse> addCharacter(@RequestBody CharacterRequest request){
+        return ResponseEntity.ok().body(characterService.addCharacter(request));
     }
 
 }
